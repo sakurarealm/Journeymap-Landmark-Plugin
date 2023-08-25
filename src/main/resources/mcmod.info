@@ -1,0 +1,16 @@
+[
+{
+  "modid": "journeymap-plugin",
+  "name": "Journey Map Plugin",
+  "description": "",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["c233zhao@uwaterloo.ca"],
+  "credits": "All rights reserved.",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
