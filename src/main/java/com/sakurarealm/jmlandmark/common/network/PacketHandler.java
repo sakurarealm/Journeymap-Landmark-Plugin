@@ -24,6 +24,9 @@ public class PacketHandler {
         int id = 0;
         HANDLER.registerMessage(ImageSendPacket.ImageSendHandler.class, ImageSendPacket.class, id++, Side.CLIENT);
         HANDLER.registerMessage(ImageRequestPacket.ImageRequestHandler.class, ImageRequestPacket.class, id++, Side.SERVER);
+        HANDLER.registerMessage(LandmarkPacket.LandmarkHandler.class, LandmarkPacket.class, id++, Side.CLIENT);
+        HANDLER.registerMessage(ImageNotExistPacket.ImageNotExistHandler.class, ImageNotExistPacket.class, id++, Side.CLIENT);
+
     }
 
     public void sendTo(EntityPlayerMP player, IMessage toSend) {

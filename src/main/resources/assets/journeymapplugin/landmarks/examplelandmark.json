@@ -1,0 +1,16 @@
+{
+  "name": "examplelandmark",
+  "x": 0,
+  "y": 0,
+  "z": 0,
+  "hoverText": "This is a landmark.",
+  "imageSource": {
+    "fileName": "sprites.png",
+    "offsetX": 0,
+    "offsetY": 0,
+    "width": 24,
+    "height": 24,
+    "color": 16777215,
+    "opacity": 1.0
+  }
+}

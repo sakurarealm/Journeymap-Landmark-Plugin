@@ -3,7 +3,9 @@ package com.sakurarealm.jmlandmark.common.network;
 import com.sakurarealm.jmlandmark.JMLandmarkMod;
 import com.sakurarealm.jmlandmark.common.utils.ImageHelper;
 import com.sakurarealm.jmlandmark.server.ServerProxy;
+import com.sun.xml.internal.bind.v2.runtime.reflect.Lister;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -75,13 +77,21 @@ public class ImageRequestPacket implements IMessage {
                     if (imageFile.exists() && imageFile.isFile()) {
                         byte[] imageData = ImageHelper.imageToBytes(imageFile.getAbsolutePath());
                         images.put(imageName, imageData);
+                    } else {
+                        // Send image not found to the player
+                        FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> {
+                            PacketHandler.getInstance().sendTo(ctx.getServerHandler().player, new ImageNotExistPacket(imageName));
+                        });
                     }
                 }
 
-                // Send the packet to the requesting player
-                ImageSendPacket packet = new ImageSendPacket(images);
+                FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> {
+                    // Send the packet to the requesting player
+                    ImageSendPacket packet = new ImageSendPacket(images);
 
-                PacketHandler.getInstance().sendTo(ctx.getServerHandler().player, packet);
+                    PacketHandler.getInstance().sendTo(ctx.getServerHandler().player, packet);
+                });
+
             }
 
             return null;

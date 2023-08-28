@@ -2,10 +2,14 @@ package com.sakurarealm.jmlandmark.server;
 
 import com.sakurarealm.jmlandmark.common.CommonProxy;
 import com.sakurarealm.jmlandmark.common.landmark.Landmark;
+import com.sakurarealm.jmlandmark.common.landmark.LandmarkManager;
 import com.sakurarealm.jmlandmark.common.network.LandmarkPacket;
 import com.sakurarealm.jmlandmark.common.network.PacketHandler;
+import com.sun.xml.internal.bind.v2.runtime.reflect.Lister;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.server.MinecraftServer;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -15,6 +19,11 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.beans.EventHandler;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @SideOnly(Side.SERVER)
 public class ServerProxy extends CommonProxy {
@@ -25,10 +34,6 @@ public class ServerProxy extends CommonProxy {
         if (landMarkManager == null)
             return;
 
-
-    }
-
-    public void onServerTick(TickEvent.ServerTickEvent event) {
 
     }
 
@@ -50,6 +55,30 @@ public class ServerProxy extends CommonProxy {
 
     }
 
+    public void refresh() {
+        List<Landmark> oldLandmarks = landMarkManager.getAllLandmarks();
+        landMarkManager.loadOrCreate();
+        List<Landmark> newLandmarks = landMarkManager.getAllLandmarks();
+
+        MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
+        if (server == null) {
+            return;
+        }
+
+        for (EntityPlayerMP playerMP : server.getPlayerList().getPlayers()) {
+            for (Landmark landmark : oldLandmarks) {
+                if (!landmark.getName().equals("examplelandmark")) {
+                    PacketHandler.getInstance().sendTo(playerMP, new LandmarkPacket(landmark, false));
+                }
+            }
+            for (Landmark landmark : newLandmarks) {
+                if (!landmark.getName().equals("examplelandmark")) {
+                    PacketHandler.getInstance().sendTo(playerMP, new LandmarkPacket(landmark, true));
+                }
+            }
+        }
+    }
+
     @SubscribeEvent
     public void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
         if (landMarkManager == null) {
@@ -57,7 +86,7 @@ public class ServerProxy extends CommonProxy {
         }
 
         for (Landmark landmark : getLandMarkManager().getAllLandmarks()) {
-            if (!landmark.getName().equals("example"))
+            if (!landmark.getName().equals("examplelandmark"))
                 PacketHandler.getInstance().sendTo((EntityPlayerMP) event.player, new LandmarkPacket(landmark, true));
         }
     }

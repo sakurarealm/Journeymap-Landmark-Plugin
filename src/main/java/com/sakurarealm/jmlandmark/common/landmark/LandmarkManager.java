@@ -2,8 +2,6 @@ package com.sakurarealm.jmlandmark.common.landmark;
 
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.common.FMLCommonHandler;
-import scala.collection.parallel.ParIterableLike;
-
 import java.io.File;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -30,7 +28,10 @@ public abstract class LandmarkManager {
             landmarksDirName = LANDMARKS_DIR;
         } else {
             mcDir = Minecraft.getMinecraft().mcDataDir;
-            worldFolderName = Minecraft.getMinecraft().getIntegratedServer().getFolderName();
+            if (Minecraft.getMinecraft().getIntegratedServer() != null)
+                worldFolderName = Minecraft.getMinecraft().getIntegratedServer().getFolderName();
+            else
+                worldFolderName = "";
             landmarksDirName = "";
         }
 
@@ -47,6 +48,10 @@ public abstract class LandmarkManager {
 
     public List<Landmark> getAllLandmarks() {
         return new ArrayList<>(landmarkMap.values());
+    }
+
+    public Map<String, Landmark> getLandmarkMap() {
+        return new ConcurrentHashMap<String, Landmark>(landmarkMap);
     }
 
     public void addLandmark(Landmark landmark) {

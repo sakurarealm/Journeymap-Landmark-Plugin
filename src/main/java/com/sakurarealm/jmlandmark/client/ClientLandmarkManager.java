@@ -11,7 +11,7 @@ import java.util.List;
 
 public class ClientLandmarkManager extends LandmarkManager {
 
-    private List<String> requestingImages = new ArrayList<>();
+    private final List<String> requestingImages = new ArrayList<>();
 
     @Override
     public void init() {
@@ -64,6 +64,10 @@ public class ClientLandmarkManager extends LandmarkManager {
         }
     }
 
+    public void withdrawRequest(String fileName) {
+        requestingImages.remove(fileName);
+    }
+
     public void onReceiveImageSource(String fileName) {
         requestingImages.remove(fileName);
 
@@ -73,6 +77,16 @@ public class ClientLandmarkManager extends LandmarkManager {
             }
         }
     }
+
+    public void resendImageRequests() {
+        if (requestingImages.isEmpty()) {
+            return;
+        }
+
+        List<String> requestingList = new ArrayList<>(requestingImages);
+        PacketHandler.getInstance().sendToServer(new ImageRequestPacket(requestingList));
+    }
+
 
     public void updateLandmark(String name) {
         Landmark landmark = landmarkMap.get(name);
@@ -103,7 +117,7 @@ public class ClientLandmarkManager extends LandmarkManager {
     @Override
     public void updateAllLandmarks() {
         for (Landmark landmark : landmarkMap.values()) {
-            updateLandmark(landmark);
+            updateLandmarkWithRequest(landmark.getName());
         }
     }
 }
