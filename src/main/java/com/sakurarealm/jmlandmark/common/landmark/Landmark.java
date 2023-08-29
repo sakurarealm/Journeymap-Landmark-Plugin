@@ -2,6 +2,7 @@ package com.sakurarealm.jmlandmark.common.landmark;
 
 import com.sakurarealm.jmlandmark.JMLandmarkMod;
 import com.sakurarealm.jmlandmark.client.plugin.LandmarkPlugin;
+import com.sakurarealm.jmlandmark.common.utils.BufHelper;
 import com.sakurarealm.jmlandmark.common.utils.MarkerOverlayFactory;
 import io.netty.buffer.ByteBuf;
 import journeymap.client.api.IClientAPI;
@@ -19,7 +20,7 @@ public class Landmark {
     private MarkerOverlay overlay;
 
     public Landmark() {
-
+        imageSource = new ImageSource();
     }
 
     public Landmark(String name, BlockPos pos, ImageSource imageSource, String hoverText) {
@@ -87,31 +88,24 @@ public class Landmark {
     }
 
     public void toBytes(ByteBuf buf) {
-        byte[] bytesName = name.getBytes();
-        buf.writeInt(bytesName.length);
-        buf.writeBytes(bytesName);
+        BufHelper.writeStringToBuffer(buf, name);
 
         buf.writeInt(pos.getX());
         buf.writeInt(pos.getY());
         buf.writeInt(pos.getZ());
 
-        byte[] bytesText = hoverText.getBytes();
-        buf.writeInt(bytesText.length);
-        buf.writeBytes(bytesText);
+        BufHelper.writeStringToBuffer(buf, hoverText);
 
         imageSource.toBytes(buf);
     }
 
     public void fromBytes(ByteBuf buf) {
-        int nameLength = buf.readInt();
-        name = new String(buf.readBytes(nameLength).array());
+        name = BufHelper.readStringFromBuffer(buf);
 
         pos = new BlockPos(buf.readInt(), buf.readInt(), buf.readInt());
 
-        int textLength = buf.readInt();
-        hoverText = new String(buf.readBytes(textLength).array());
+        hoverText = BufHelper.readStringFromBuffer(buf);
 
-        imageSource = new ImageSource();
         imageSource.fromBytes(buf);
     }
 

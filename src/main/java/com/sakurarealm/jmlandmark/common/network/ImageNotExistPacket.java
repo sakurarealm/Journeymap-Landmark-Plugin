@@ -2,6 +2,7 @@ package com.sakurarealm.jmlandmark.common.network;
 
 import com.sakurarealm.jmlandmark.JMLandmarkMod;
 import com.sakurarealm.jmlandmark.client.ClientLandmarkManager;
+import com.sakurarealm.jmlandmark.common.utils.BufHelper;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -23,15 +24,12 @@ public class ImageNotExistPacket implements IMessage {
 
     @Override
     public void fromBytes(ByteBuf buf) {
-        int length = buf.readInt();
-        fileName = new String(buf.readBytes(length).array());
+        fileName = BufHelper.readStringFromBuffer(buf);
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
-        byte[] bytesName = fileName.getBytes();
-        buf.writeInt(bytesName.length);
-        buf.writeBytes(bytesName);
+        BufHelper.writeStringToBuffer(buf, fileName);
     }
 
     public String getFileName() {

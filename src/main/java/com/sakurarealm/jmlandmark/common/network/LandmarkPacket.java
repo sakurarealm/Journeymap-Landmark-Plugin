@@ -17,7 +17,7 @@ public class LandmarkPacket implements IMessage {
     private boolean adding;
 
     public LandmarkPacket() {
-
+        landmark = new Landmark();
     }
 
     public LandmarkPacket(Landmark landmark, boolean adding) {

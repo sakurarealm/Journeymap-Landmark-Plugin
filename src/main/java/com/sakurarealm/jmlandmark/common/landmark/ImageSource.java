@@ -1,6 +1,7 @@
 package com.sakurarealm.jmlandmark.common.landmark;
 
 import com.sakurarealm.jmlandmark.JMLandmarkMod;
+import com.sakurarealm.jmlandmark.common.utils.BufHelper;
 import com.sakurarealm.jmlandmark.common.utils.ImageHelper;
 import io.netty.buffer.ByteBuf;
 import journeymap.client.api.model.MapImage;
@@ -15,6 +16,7 @@ public class ImageSource {
 
     public static final String CLIENT_IMAGES_CACHE_DIR = "journeymap/plugin/landmark_caches/images/";
 
+    private String name;
     private File image;
     private String fileName;
     private int offsetX, offsetY, width, height, color;
@@ -24,7 +26,8 @@ public class ImageSource {
 
     }
 
-    public ImageSource(String fileName, int offsetX, int offsetY, int width, int height) {
+    public ImageSource(String name, String fileName, int offsetX, int offsetY, int width, int height) {
+        this.name = name;
         this.image = JMLandmarkMod.getProxy().parseImageSource(fileName);
         this.fileName = fileName;
         this.offsetX = offsetX;
@@ -35,8 +38,8 @@ public class ImageSource {
         this.opacity = 1.f;
     }
 
-    public ImageSource(String fileName, int offsetX, int offsetY, int width, int height, int color, double opacity) {
-        this(fileName, offsetX, offsetY, width, height);
+    public ImageSource(String name, String fileName, int offsetX, int offsetY, int width, int height, int color, double opacity) {
+        this(name, fileName, offsetX, offsetY, width, height);
         this.color = color;
         this.opacity = opacity;
     }
@@ -71,9 +74,7 @@ public class ImageSource {
 
     public void toBytes(ByteBuf buf) {
         // Write file name
-        byte[] bytesName = fileName.getBytes();
-        buf.writeInt(bytesName.length);
-        buf.writeBytes(bytesName);
+        BufHelper.writeStringToBuffer(buf, fileName);
 
         // Write offsets and scales
         buf.writeInt(offsetX);
@@ -87,8 +88,7 @@ public class ImageSource {
     }
 
     public void fromBytes(ByteBuf buf) {
-        int nameLength = buf.readInt();
-        fileName = new String(buf.readBytes(nameLength).array());
+        fileName = BufHelper.readStringFromBuffer(buf);
         image = JMLandmarkMod.getProxy().parseImageSource(fileName);
 
         offsetX = buf.readInt();

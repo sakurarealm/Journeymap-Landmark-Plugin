@@ -2,6 +2,7 @@ package com.sakurarealm.jmlandmark.common.network;
 
 import com.sakurarealm.jmlandmark.JMLandmarkMod;
 import com.sakurarealm.jmlandmark.client.ClientLandmarkManager;
+import com.sakurarealm.jmlandmark.common.utils.BufHelper;
 import com.sakurarealm.jmlandmark.common.utils.ImageHelper;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
@@ -18,11 +19,11 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class ImageSendPacket implements IMessage {
 
-    private Map<String, byte[]> images;
+    private final Map<String, byte[]> images;
 
 
     public ImageSendPacket() {
-
+        images = new ConcurrentHashMap<>();
     }
 
     public ImageSendPacket(Map<String, byte[]> images) {
@@ -33,15 +34,9 @@ public class ImageSendPacket implements IMessage {
     public void fromBytes(ByteBuf buf) {
         int numImages = buf.readInt();
 
-        images = new ConcurrentHashMap<>();
         for (int i = 0; i < numImages; i++) {
-            int nameLength = buf.readInt();
-            String imageName = new String(buf.readBytes(nameLength).array());
-
-            int dataLength = buf.readInt();
-            byte[] imageData = new byte[dataLength];
-            buf.readBytes(imageData);
-            images.put(imageName, imageData);
+            String imageName = BufHelper.readStringFromBuffer(buf);
+            images.put(imageName, BufHelper.readImageFromBuffer(buf));
         }
     }
 
@@ -51,13 +46,9 @@ public class ImageSendPacket implements IMessage {
 
         for (Map.Entry<String, byte[]> entry : images.entrySet()) {
             // Write image name
-            byte[] nameBytes = entry.getKey().getBytes();
-            buf.writeInt(nameBytes.length);
-            buf.writeBytes(nameBytes);
+            BufHelper.writeStringToBuffer(buf, entry.getKey());
             // Write RGBA image bytes
-            byte[] imageBytes = entry.getValue();
-            buf.writeInt(imageBytes.length);
-            buf.writeBytes(imageBytes);
+            BufHelper.writeImageToBuffer(buf, entry.getValue());
         }
 
     }

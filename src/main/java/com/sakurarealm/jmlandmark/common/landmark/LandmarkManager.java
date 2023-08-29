@@ -2,6 +2,7 @@ package com.sakurarealm.jmlandmark.common.landmark;
 
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.relauncher.Side;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -23,7 +24,7 @@ public abstract class LandmarkManager {
 
     public void init() {
         String worldFolderName, landmarksDirName;
-        if (FMLCommonHandler.instance().getMinecraftServerInstance().isDedicatedServer()) {
+        if (FMLCommonHandler.instance().getSide() == Side.SERVER) {
             mcDir = FMLCommonHandler.instance().getMinecraftServerInstance().getDataDirectory();
             worldFolderName = "";
             landmarksDirName = LANDMARKS_DIR;
