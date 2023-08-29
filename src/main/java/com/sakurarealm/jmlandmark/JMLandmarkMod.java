@@ -11,8 +11,7 @@ import org.apache.logging.log4j.Logger;
 
 @Mod(modid = JMLandmarkMod.MODID, name = JMLandmarkMod.NAME, version = JMLandmarkMod.VERSION)
 @Mod.EventBusSubscriber(modid = JMLandmarkMod.MODID)
-public class JMLandmarkMod
-{
+public class JMLandmarkMod {
     public static final String MODID = "jm-landmark";
     public static final String NAME = "Journey Map Landmark Plugin";
     public static final String VERSION = "v0.1-SNAPSHOT";
@@ -23,20 +22,23 @@ public class JMLandmarkMod
     private static JMLandmarkMod INSTANCE;
 
     @SidedProxy(clientSide = "com.sakurarealm.jmlandmark.client.ClientProxy",
-                serverSide = "com.sakurarealm.jmlandmark.server.ServerProxy")
+            serverSide = "com.sakurarealm.jmlandmark.server.ServerProxy")
     private static CommonProxy PROXY;
-
-    public static CommonProxy getProxy() {
-        return PROXY;
-    }
 
     public JMLandmarkMod() {
         MinecraftForge.EVENT_BUS.register(this);
     }
 
+    public static CommonProxy getProxy() {
+        return PROXY;
+    }
+
+    public static Logger getLogger() {
+        return LOGGER;
+    }
+
     @EventHandler
-    public void preInit(FMLPreInitializationEvent event)
-    {
+    public void preInit(FMLPreInitializationEvent event) {
         LOGGER = event.getModLog();
         PROXY.preInit(event);
 
@@ -44,13 +46,11 @@ public class JMLandmarkMod
     }
 
     @EventHandler
-    public void init(FMLInitializationEvent event)
-    {
+    public void init(FMLInitializationEvent event) {
         PROXY.init(event);
         // LOGGER.info("DIRT BLOCK >> {}", Blocks.DIRT.getRegistryName());
 
     }
-
 
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent event) {
@@ -66,10 +66,6 @@ public class JMLandmarkMod
     @Mod.EventHandler
     public void serverStopping(FMLServerStoppingEvent event) {
         PROXY.serverStopping(event);
-    }
-
-    public static Logger getLogger() {
-        return LOGGER;
     }
 
 }

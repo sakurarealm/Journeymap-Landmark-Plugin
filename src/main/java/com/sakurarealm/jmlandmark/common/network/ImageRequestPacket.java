@@ -2,10 +2,7 @@ package com.sakurarealm.jmlandmark.common.network;
 
 import com.sakurarealm.jmlandmark.JMLandmarkMod;
 import com.sakurarealm.jmlandmark.common.utils.ImageHelper;
-import com.sakurarealm.jmlandmark.server.ServerProxy;
-import com.sun.xml.internal.bind.v2.runtime.reflect.Lister;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -37,7 +34,7 @@ public class ImageRequestPacket implements IMessage {
         int numImages = buf.readInt();
         imageNames = new ArrayList<>();
 
-        for (int i=0; i<numImages; i++) {
+        for (int i = 0; i < numImages; i++) {
             int length = buf.readInt();
             String imageName = new String(buf.readBytes(length).array());
             imageNames.add(imageName);

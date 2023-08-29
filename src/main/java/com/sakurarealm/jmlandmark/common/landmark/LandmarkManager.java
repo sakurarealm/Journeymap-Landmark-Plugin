@@ -2,19 +2,20 @@ package com.sakurarealm.jmlandmark.common.landmark;
 
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class LandmarkManager {
 
-    protected Map<String, Landmark> landmarkMap = new ConcurrentHashMap<>();
-
-    protected File mcDir, dataDir, imageDir, landmarksDir;
-
     private static final String LANDMARK_DIR = "maplandmarks/data/";
     private static final String LANDMARK_IMAGE_DIR = "images";
     private static final String LANDMARKS_DIR = "landmarks";
+    protected Map<String, Landmark> landmarkMap = new ConcurrentHashMap<>();
+    protected File mcDir, dataDir, imageDir, landmarksDir;
 
     public LandmarkManager() {
 

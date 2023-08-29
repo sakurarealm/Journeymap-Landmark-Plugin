@@ -9,16 +9,15 @@ import net.minecraftforge.fml.relauncher.Side;
 public class PacketHandler {
 
     private static final PacketHandler INSTANCE = new PacketHandler();
-
-    public static PacketHandler getInstance() {
-        return INSTANCE;
-    }
+    private static final SimpleNetworkWrapper HANDLER = new SimpleNetworkWrapper(JMLandmarkMod.MODID);
 
     private PacketHandler() {
 
     }
 
-    private static final SimpleNetworkWrapper HANDLER = new SimpleNetworkWrapper(JMLandmarkMod.MODID);
+    public static PacketHandler getInstance() {
+        return INSTANCE;
+    }
 
     public void init() {
         int id = 0;

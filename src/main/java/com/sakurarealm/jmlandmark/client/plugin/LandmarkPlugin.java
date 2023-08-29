@@ -15,12 +15,12 @@ public class LandmarkPlugin implements IClientPlugin {
         INSTANCE = this;
     }
 
-    public IClientAPI getClientAPI() {
-        return clientAPI;
-    }
-
     public static LandmarkPlugin getInstance() {
         return INSTANCE;
+    }
+
+    public IClientAPI getClientAPI() {
+        return clientAPI;
     }
 
     @Override

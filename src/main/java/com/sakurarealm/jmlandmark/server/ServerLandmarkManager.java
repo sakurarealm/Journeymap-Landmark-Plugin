@@ -1,14 +1,16 @@
 package com.sakurarealm.jmlandmark.server;
 
 import com.sakurarealm.jmlandmark.JMLandmarkMod;
-import com.sakurarealm.jmlandmark.common.landmark.ImageSource;
 import com.sakurarealm.jmlandmark.common.landmark.Landmark;
 import com.sakurarealm.jmlandmark.common.landmark.LandmarkManager;
 import org.apache.commons.io.IOUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -16,7 +18,12 @@ import java.nio.file.Path;
 public class ServerLandmarkManager extends LandmarkManager {
     @Override
     public void init() {
+        super.init();
         loadOrCreate();
+    }
+
+    protected void saveLandmark() {
+
     }
 
     @Override
@@ -50,7 +57,7 @@ public class ServerLandmarkManager extends LandmarkManager {
             // Copy the default image file from the package
             File exampleImageFile = new File(imageDir, "sprites.png");
             if (!exampleImageFile.exists() || !exampleImageFile.isFile()) {
-                try (InputStream is = ServerLandmarkManager.class.getResourceAsStream("assets/journeymapplugin/images/sprites.png");) {
+                try (InputStream is = ServerLandmarkManager.class.getResourceAsStream("/assets/jmlandmark/images/sprites.png")) {
                     if (is == null) {
                         JMLandmarkMod.getLogger().error("Resource image doesn't exist.");
                         return;
@@ -65,7 +72,7 @@ public class ServerLandmarkManager extends LandmarkManager {
             }
 
             // Copy the example landmark to the landmarks file
-            try (InputStream is = ServerLandmarkManager.class.getResourceAsStream("assets/journeymapplugin/landmarks/examplelandmark.json")) {
+            try (InputStream is = ServerLandmarkManager.class.getResourceAsStream("/assets/jmlandmark/landmarks/examplelandmark.json")) {
                 if (is == null) {
                     JMLandmarkMod.getLogger().error("Resource landmark doesn't exist.");
                     return;
@@ -78,5 +85,5 @@ public class ServerLandmarkManager extends LandmarkManager {
             }
         }
     }
-    
+
 }

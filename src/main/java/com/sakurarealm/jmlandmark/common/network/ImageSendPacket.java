@@ -2,7 +2,6 @@ package com.sakurarealm.jmlandmark.common.network;
 
 import com.sakurarealm.jmlandmark.JMLandmarkMod;
 import com.sakurarealm.jmlandmark.client.ClientLandmarkManager;
-import com.sakurarealm.jmlandmark.client.ClientProxy;
 import com.sakurarealm.jmlandmark.common.utils.ImageHelper;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
@@ -35,7 +34,7 @@ public class ImageSendPacket implements IMessage {
         int numImages = buf.readInt();
 
         images = new ConcurrentHashMap<>();
-        for (int i=0; i<numImages; i++) {
+        for (int i = 0; i < numImages; i++) {
             int nameLength = buf.readInt();
             String imageName = new String(buf.readBytes(nameLength).array());
 
@@ -73,7 +72,7 @@ public class ImageSendPacket implements IMessage {
         public IMessage onMessage(ImageSendPacket message, MessageContext ctx) {
             if (ctx.side == Side.CLIENT) {
                 try { // Write the image files
-                    for (Map.Entry<String, byte[]> entry: message.getImages().entrySet()) {
+                    for (Map.Entry<String, byte[]> entry : message.getImages().entrySet()) {
                         File outputFile = JMLandmarkMod.getProxy().parseImageSource(entry.getKey());
                         BufferedImage image = ImageHelper.imageFromBytes(entry.getValue());
                         ImageHelper.saveImage(outputFile, image);
@@ -85,7 +84,7 @@ public class ImageSendPacket implements IMessage {
                 Minecraft.getMinecraft().addScheduledTask(() -> {
                     for (String fileName : message.getImages().keySet()) {
                         ((ClientLandmarkManager) (JMLandmarkMod.getProxy().getLandMarkManager())).onReceiveImageSource(
-                            fileName
+                                fileName
                         );
                     }
                 });

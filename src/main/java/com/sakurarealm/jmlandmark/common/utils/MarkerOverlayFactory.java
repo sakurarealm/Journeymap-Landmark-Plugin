@@ -104,7 +104,7 @@ public class MarkerOverlayFactory {
                     .setDisplayHeight(size)
                     .setDisplayWidth(size)
                     .setAnchorX(size / 2)
-                    .setAnchorY(size / 2);;
+                    .setAnchorY(size / 2);
 
             overlay.flagForRerender();
         }

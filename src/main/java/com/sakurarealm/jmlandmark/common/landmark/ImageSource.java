@@ -4,7 +4,6 @@ import com.sakurarealm.jmlandmark.JMLandmarkMod;
 import com.sakurarealm.jmlandmark.common.utils.ImageHelper;
 import io.netty.buffer.ByteBuf;
 import journeymap.client.api.model.MapImage;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.json.JSONException;
 import org.json.JSONObject;
 

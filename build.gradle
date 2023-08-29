@@ -1,16 +1,20 @@
 buildscript {
     repositories {
         maven { url = 'https://maven.minecraftforge.net/' }
+        jcenter()
         mavenCentral()
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:3.+'
     }
 }
-        
+
+plugins {
+    id 'com.github.johnrengelman.shadow' version '2.0.4'
+    id 'java'
+}
 apply plugin: 'net.minecraftforge.gradle'
 // Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
-apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
 version = 'v0.1-SNAPSHOT'
@@ -18,6 +22,7 @@ group = 'com.sakurarealm' // http://maven.apache.org/guides/mini/guide-naming-co
 archivesBaseName = 'JourneyMap-Landmark'
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
+tasks.withType(AbstractCompile)*.options*.encoding = tasks.withType(GroovyCompile)*.groovyOptions*.encoding = 'UTF-8'
 
 minecraft {
     // The mappings can be changed at any time, and must be in the following format.
@@ -56,36 +61,18 @@ minecraft {
 }
 
 repositories {
+    mavenCentral()
     flatDir {
         dirs 'libs'
     }
 }
 
 dependencies {
-    // Specify the version of Minecraft to use, If this is any group other then 'net.minecraft' it is assumed
-    // that the dep is a ForgeGradle 'patcher' dependency. And it's patches will be applied.
-    // The userdev artifact is a special name and will get all sorts of transformations applied to it.
     minecraft 'net.minecraftforge:forge:1.12.2-14.23.5.2859'
     compileOnly name: "journeymap-api-1.12-1.4"
-    implementation group: 'org.json', name: 'json', version: '20090211'
-    // You may put jars on which you depend on in ./libs or you may define them like so..
-    // compile "some.group:artifact:version:classifier"
-    // compile "some.group:artifact:version"
 
-    // Real examples
-    // compile 'com.mod-buildcraft:buildcraft:6.0.8:dev'  // adds buildcraft to the dev env
-    // compile 'com.googlecode.efficient-java-matrix-library:ejml:0.24' // adds ejml to the dev env
-
-    // The 'provided' configuration is for optional dependencies that exist at compile-time but might not at runtime.
-    // provided 'com.mod-buildcraft:buildcraft:6.0.8:dev'
-
-    // These dependencies get remapped to your current MCP mappings
-    // deobf 'com.mod-buildcraft:buildcraft:6.0.8:dev'
-
-    // For more info...
-    // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
-    // http://www.gradle.org/docs/current/userguide/dependency_management.html
-
+    compile 'org.json:json:20230227'
+    shadow 'org.json:json:20230227'
 }
 
 // Example for how to get properties into the manifest for reading by the runtime..
@@ -101,23 +88,31 @@ jar {
             "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
     }
+
+//    from {
+//        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+//        configurations.runtime.collect { it.isDirectory() ? it : zipTree(it) }
+//    }
 }
 
-// Example configuration to allow publishing using the maven-publish task
-// This is the preferred method to reobfuscate your jar file
-jar.finalizedBy('reobfJar') 
-// However if you are in a multi-project build, dev time needs unobfed jar files, so you can delay the obfuscation until publishing by doing
-//publish.dependsOn('reobfJar')
+shadowJar {
+    configurations = [project.configurations.shadow]
 
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            artifact jar
-        }
-    }
-    repositories {
-        maven {
-            url "file:///${project.projectDir}/mcmodsrepo"
-        }
+    relocate("org.json", "${project.group}.shadow.org.json")
+}
+
+reobf {
+    shadowJar {
+
     }
 }
+
+tasks.jar.classifier = "original"
+tasks.shadowJar.classifier = ""
+
+artifacts {
+    archives shadowJar
+}
+
+jar.finalizedBy('reobfJar')
+tasks.shadowJar.finalizedBy('reobfShadowJar')
