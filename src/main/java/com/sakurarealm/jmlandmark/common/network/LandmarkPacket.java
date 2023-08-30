@@ -13,7 +13,7 @@ import net.minecraftforge.fml.relauncher.Side;
 
 public class LandmarkPacket implements IMessage {
 
-    private Landmark landmark;
+    private final Landmark landmark;
     private boolean adding;
 
     public LandmarkPacket() {
@@ -50,6 +50,7 @@ public class LandmarkPacket implements IMessage {
         public IMessage onMessage(LandmarkPacket message, MessageContext ctx) {
             if (ctx.side == Side.CLIENT) {
                 Minecraft.getMinecraft().addScheduledTask(() -> {
+                    JMLandmarkMod.getLogger().info(String.format("Receiving landmark %s", message.getLandmark().getName()));
                     ClientProxy proxy = (ClientProxy) JMLandmarkMod.getProxy();
                     ClientLandmarkManager manager = (ClientLandmarkManager) proxy.getLandMarkManager();
                     if (message.isAdding()) {

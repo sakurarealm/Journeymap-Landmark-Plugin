@@ -6,7 +6,7 @@ import com.sakurarealm.jmlandmark.common.utils.BufHelper;
 import com.sakurarealm.jmlandmark.common.utils.MarkerOverlayFactory;
 import io.netty.buffer.ByteBuf;
 import journeymap.client.api.IClientAPI;
-import journeymap.client.api.display.MarkerOverlay;
+import journeymap.client.api.display.ImageOverlay;
 import journeymap.client.api.model.MapImage;
 import net.minecraft.util.math.BlockPos;
 import org.json.JSONException;
@@ -17,7 +17,7 @@ public class Landmark {
     private String name, hoverText;
     private ImageSource imageSource;
     private BlockPos pos;
-    private MarkerOverlay overlay;
+    private ImageOverlay overlay;
 
     public Landmark() {
         imageSource = new ImageSource();
@@ -58,6 +58,12 @@ public class Landmark {
         }
     }
 
+    public void rescaleToMinimap() {
+        if (overlay != null) {
+            MarkerOverlayFactory.calculateDisplayRange(overlay, pos, MarkerOverlayFactory.SIZE, 8.0);
+        }
+    }
+
     public void hide() {
         IClientAPI clientAPI = LandmarkPlugin.getInstance().getClientAPI();
 
@@ -87,6 +93,10 @@ public class Landmark {
 
     }
 
+    public ImageOverlay getOverlay() {
+        return overlay;
+    }
+
     public void toBytes(ByteBuf buf) {
         BufHelper.writeStringToBuffer(buf, name);
 
@@ -102,7 +112,11 @@ public class Landmark {
     public void fromBytes(ByteBuf buf) {
         name = BufHelper.readStringFromBuffer(buf);
 
-        pos = new BlockPos(buf.readInt(), buf.readInt(), buf.readInt());
+        int x = buf.readInt();
+        int y = buf.readInt();
+        int z = buf.readInt();
+
+        pos = new BlockPos(x, y, z);
 
         hoverText = BufHelper.readStringFromBuffer(buf);
 

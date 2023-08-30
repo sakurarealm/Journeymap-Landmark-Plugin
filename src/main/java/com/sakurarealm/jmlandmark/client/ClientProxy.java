@@ -13,8 +13,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 public class ClientProxy extends CommonProxy {
 
-    public static final String CLIENT_CONFIG_CACHE_FILE = "journeymap/plugin/landmark_caches/";
-
     @Override
     public void preInit(FMLPreInitializationEvent event) {
         super.preInit(event);
@@ -34,5 +32,6 @@ public class ClientProxy extends CommonProxy {
             JMLandmarkMod.getLogger().info("JourneyMap not loaded.");
         }
     }
+
 
 }

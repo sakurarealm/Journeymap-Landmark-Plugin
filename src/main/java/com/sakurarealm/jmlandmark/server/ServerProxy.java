@@ -1,10 +1,10 @@
 package com.sakurarealm.jmlandmark.server;
 
 import com.sakurarealm.jmlandmark.common.CommonProxy;
+import com.sakurarealm.jmlandmark.common.command.CommandLandmark;
 import com.sakurarealm.jmlandmark.common.landmark.Landmark;
 import com.sakurarealm.jmlandmark.common.network.LandmarkPacket;
 import com.sakurarealm.jmlandmark.common.network.PacketHandler;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -25,6 +25,8 @@ public class ServerProxy extends CommonProxy {
         super.serverStarting(event);
         landMarkManager = new ServerLandmarkManager();
         landMarkManager.init();
+
+        event.registerServerCommand(new CommandLandmark());
     }
 
     @Override

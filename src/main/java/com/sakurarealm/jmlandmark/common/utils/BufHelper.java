@@ -2,8 +2,6 @@ package com.sakurarealm.jmlandmark.common.utils;
 
 import io.netty.buffer.ByteBuf;
 
-import java.awt.image.BufferedImage;
-
 public class BufHelper {
 
     public static String readStringFromBuffer(ByteBuf buf) {
@@ -15,9 +13,9 @@ public class BufHelper {
     }
 
     public static void writeStringToBuffer(ByteBuf buf, String string) {
-        byte[] bytesName = string.getBytes();
-        buf.writeInt(bytesName.length);
-        buf.writeBytes(bytesName);
+        byte[] bytes = string.getBytes();
+        buf.writeInt(bytes.length);
+        buf.writeBytes(bytes);
     }
 
     public static byte[] readImageFromBuffer(ByteBuf buf) {

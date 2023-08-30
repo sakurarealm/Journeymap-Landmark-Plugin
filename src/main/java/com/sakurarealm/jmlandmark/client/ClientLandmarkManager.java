@@ -1,6 +1,7 @@
 package com.sakurarealm.jmlandmark.client;
 
 import com.sakurarealm.jmlandmark.JMLandmarkMod;
+import com.sakurarealm.jmlandmark.client.plugin.LandmarkPlugin;
 import com.sakurarealm.jmlandmark.common.landmark.Landmark;
 import com.sakurarealm.jmlandmark.common.landmark.LandmarkManager;
 import com.sakurarealm.jmlandmark.common.network.ImageRequestPacket;
@@ -49,12 +50,12 @@ public class ClientLandmarkManager extends LandmarkManager {
         if (landmark != null) {
             landmark.hide();
         }
-
         super.removeLandmark(name);
     }
 
     public void requestImageSource(String fileName) {
         if (!requestingImages.contains(fileName)) {
+            JMLandmarkMod.getLogger().info(String.format("Missing %s image", fileName));
             requestingImages.add(fileName);
             List<String> requestingList = new ArrayList<>();
             requestingList.add(fileName);
@@ -87,14 +88,6 @@ public class ClientLandmarkManager extends LandmarkManager {
         PacketHandler.getInstance().sendToServer(new ImageRequestPacket(requestingList));
     }
 
-
-    public void updateLandmark(String name) {
-        Landmark landmark = landmarkMap.get(name);
-        if (landmark != null) {
-            updateLandmark(landmark);
-        }
-    }
-
     protected void updateLandmark(Landmark landmark) {
         if (!landmark.show()) {
             JMLandmarkMod.getLogger().warn(
@@ -108,9 +101,12 @@ public class ClientLandmarkManager extends LandmarkManager {
     public void updateLandmarkWithRequest(String name) {
         Landmark landmark = landmarkMap.get(name);
         if (landmark != null) {
+            JMLandmarkMod.getLogger().info(String.format("Displaying landmark %s", landmark.getName()));
             if (!landmark.show()) {
                 requestImageSource(landmark.getSourceImageName());
             }
+        } else {
+            JMLandmarkMod.getLogger().warn(String.format("Landmark %s not found", name));
         }
     }
 
@@ -118,6 +114,23 @@ public class ClientLandmarkManager extends LandmarkManager {
     public void updateAllLandmarks() {
         for (Landmark landmark : landmarkMap.values()) {
             updateLandmarkWithRequest(landmark.getName());
+        }
+    }
+
+    public void updateFullscreenDisplay() {
+        for (Landmark landmark : getAllLandmarks()) {
+            try {
+                LandmarkPlugin.getInstance().getClientAPI().show(landmark.getOverlay());
+                landmark.getOverlay().flagForRerender();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    public void updateMinimapDisplay() {
+        for (Landmark landmark : getAllLandmarks()) {
+            landmark.rescaleToMinimap();
         }
     }
 }

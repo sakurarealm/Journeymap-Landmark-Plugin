@@ -62,17 +62,17 @@ public class ImageSendPacket implements IMessage {
         @Override
         public IMessage onMessage(ImageSendPacket message, MessageContext ctx) {
             if (ctx.side == Side.CLIENT) {
-                try { // Write the image files
-                    for (Map.Entry<String, byte[]> entry : message.getImages().entrySet()) {
-                        File outputFile = JMLandmarkMod.getProxy().parseImageSource(entry.getKey());
-                        BufferedImage image = ImageHelper.imageFromBytes(entry.getValue());
-                        ImageHelper.saveImage(outputFile, image);
-                    }
-                } catch (IOException e) {
-                    JMLandmarkMod.getLogger().error(e);
-                }
                 // Update the Journey map in the main thread.
                 Minecraft.getMinecraft().addScheduledTask(() -> {
+                    try { // Write the image files
+                        for (Map.Entry<String, byte[]> entry : message.getImages().entrySet()) {
+                            File outputFile = JMLandmarkMod.getProxy().parseImageSource(entry.getKey());
+                            BufferedImage image = ImageHelper.imageFromBytes(entry.getValue());
+                            ImageHelper.saveImage(outputFile, image);
+                        }
+                    } catch (IOException e) {
+                        JMLandmarkMod.getLogger().error(e);
+                    }
                     for (String fileName : message.getImages().keySet()) {
                         ((ClientLandmarkManager) (JMLandmarkMod.getProxy().getLandMarkManager())).onReceiveImageSource(
                                 fileName

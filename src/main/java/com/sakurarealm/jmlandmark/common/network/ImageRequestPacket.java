@@ -16,9 +16,10 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ImageRequestPacket implements IMessage {
-    private List<String> imageNames;
+    private final List<String> imageNames;
 
     public ImageRequestPacket() {
+        imageNames = new ArrayList<>();
     }
 
     public ImageRequestPacket(List<String> imageNames) {
@@ -33,7 +34,6 @@ public class ImageRequestPacket implements IMessage {
     @Override
     public void fromBytes(ByteBuf buf) {
         int numImages = buf.readInt();
-        imageNames = new ArrayList<>();
 
         for (int i = 0; i < numImages; i++) {
             String imageName = BufHelper.readStringFromBuffer(buf);
@@ -79,13 +79,13 @@ public class ImageRequestPacket implements IMessage {
                         });
                     }
                 }
+                if (images.size() != 0)
+                    FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> {
+                        // Send the packet to the requesting player
+                        ImageSendPacket packet = new ImageSendPacket(images);
 
-                FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> {
-                    // Send the packet to the requesting player
-                    ImageSendPacket packet = new ImageSendPacket(images);
-
-                    PacketHandler.getInstance().sendTo(ctx.getServerHandler().player, packet);
-                });
+                        PacketHandler.getInstance().sendTo(ctx.getServerHandler().player, packet);
+                    });
 
             }
 

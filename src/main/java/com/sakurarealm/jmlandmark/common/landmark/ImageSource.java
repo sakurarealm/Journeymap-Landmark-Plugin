@@ -11,11 +11,12 @@ import org.json.JSONObject;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ImageSource {
 
-    public static final String CLIENT_IMAGES_CACHE_DIR = "journeymap/plugin/landmark_caches/images/";
-
+    private final static Map<String, BufferedImage> cachedImages = new HashMap<>();
     private String name;
     private File image;
     private String fileName;
@@ -57,7 +58,12 @@ public class ImageSource {
             return null;
         }
         try {
-            return ImageHelper.imageToBufferedImage(image.getAbsolutePath());
+            BufferedImage cachedImage = cachedImages.get(fileName);
+            if (cachedImage == null) {
+                cachedImage = ImageHelper.imageToBufferedImage(image.getAbsolutePath());
+                cachedImages.put(fileName, cachedImage);
+            }
+            return cachedImage;
         } catch (IOException e) {
             return null;
         }
@@ -69,7 +75,16 @@ public class ImageSource {
         if (img == null)
             return null;
 
-        return new MapImage(img, offsetX, offsetY, width, height, color, (float) opacity);
+        // Crop the buffered image. This img refers to the original bufferedImage.
+        BufferedImage croppedImg = img.getSubimage(offsetX, offsetY, width, height);
+
+        MapImage mapImage = new MapImage(croppedImg, offsetX, offsetY, width, height, color, (float) opacity);
+
+        mapImage.setAnchorX(width / 2.)
+                .setAnchorY(height / 2.)
+                .setRotation(0);
+
+        return mapImage;
     }
 
     public void toBytes(ByteBuf buf) {
@@ -92,11 +107,12 @@ public class ImageSource {
         image = JMLandmarkMod.getProxy().parseImageSource(fileName);
 
         offsetX = buf.readInt();
-        offsetX = buf.readInt();
+        offsetY = buf.readInt();
         width = buf.readInt();
         height = buf.readInt();
+
         color = buf.readInt();
-        opacity = buf.readInt();
+        opacity = buf.readDouble();
     }
 
     public void toJson(JSONObject obj) throws JSONException {

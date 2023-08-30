@@ -17,7 +17,7 @@ apply plugin: 'net.minecraftforge.gradle'
 // Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 apply plugin: 'maven-publish'
 
-version = 'v0.1-SNAPSHOT'
+version = '1.0'
 group = 'com.sakurarealm' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'JourneyMap-Landmark'
 

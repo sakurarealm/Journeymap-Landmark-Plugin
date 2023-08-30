@@ -55,7 +55,7 @@ public class ServerLandmarkManager extends LandmarkManager {
             JMLandmarkMod.getLogger().info("Creating the example landmark.");
 
             // Copy the default image file from the package
-            File exampleImageFile = new File(imageDir, "sprites.png");
+            File exampleImageFile = JMLandmarkMod.getProxy().parseImageSource("sprites.png");
             if (!exampleImageFile.exists() || !exampleImageFile.isFile()) {
                 try (InputStream is = ServerLandmarkManager.class.getResourceAsStream("/assets/jmlandmark/images/sprites.png")) {
                     if (is == null) {

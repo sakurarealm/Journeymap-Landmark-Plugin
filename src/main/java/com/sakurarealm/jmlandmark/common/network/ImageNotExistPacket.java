@@ -41,11 +41,9 @@ public class ImageNotExistPacket implements IMessage {
         @Override
         public IMessage onMessage(ImageNotExistPacket message, MessageContext ctx) {
             if (ctx.side == Side.CLIENT) {
-                Minecraft.getMinecraft().addScheduledTask(() -> {
-                    ((ClientLandmarkManager) (JMLandmarkMod.getProxy().getLandMarkManager())).withdrawRequest(
-                            message.getFileName()
-                    );
-                });
+                Minecraft.getMinecraft().addScheduledTask(() -> ((ClientLandmarkManager) (JMLandmarkMod.getProxy().getLandMarkManager())).withdrawRequest(
+                        message.getFileName()
+                ));
             }
             return null;
         }
